@@ -14,12 +14,12 @@ interface TableProps {
 
 const Table: React.FC<TableProps> = ({ data }) => {
   return (
-    <View style={styles.container}>
+    <View>
       {data.map((row, rowIndex) => (
         <View key={rowIndex} style={styles.row}>
           {row.map((cell, cellIndex) => (
             <View key={cellIndex} style={styles.cell}>
-              <Text>{cell}</Text>
+              <Text style={styles.tableText}>{cell}</Text>
             </View>
           ))}
         </View>
@@ -97,7 +97,10 @@ const Home = ({ navigation }: HomeScreenProps) => {
     let tablearr = [["Price", "Amount"]];
     mySetKeys.forEach((key) => {
       const value = books.mySet[key];
-      tablearr.push();
+      console.log("value--------------------", value);
+      if (value && value[0] && value[1]) {
+        tablearr.push([value[0].toString(), value[1].toString()]);
+      }
     });
     return <Table data={tablearr} />;
   };
@@ -134,5 +137,9 @@ const styles = StyleSheet.create({
     borderColor: "black",
     padding: 10,
     alignItems: "center",
+  },
+
+  tableText: {
+    color: "black",
   },
 });
