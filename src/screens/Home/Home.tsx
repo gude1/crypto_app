@@ -6,33 +6,13 @@ import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { BookQueryResponse } from "../../types";
 import { useAppDispatch, useAppSelector } from "../../redux/hooks/hook";
 import { addBook } from "../../redux/slice/BookListSlice";
+import Table from "../../components/Table";
 type HomeScreenProps = NativeStackScreenProps<RootStackParamList, "Home">;
-
-interface TableProps {
-  data: string[][];
-}
-
-const Table: React.FC<TableProps> = ({ data }) => {
-  return (
-    <View>
-      {data.map((row, rowIndex) => (
-        <View key={rowIndex} style={styles.row}>
-          {row.map((cell, cellIndex) => (
-            <View key={cellIndex} style={styles.cell}>
-              <Text style={styles.tableText}>{cell}</Text>
-            </View>
-          ))}
-        </View>
-      ))}
-    </View>
-  );
-};
 
 const Home = ({ navigation }: HomeScreenProps) => {
   const ws = useRef<WebSocket | null>(null);
   const dispatch = useAppDispatch();
   const books = useAppSelector((state) => state.books);
-  console.log("books-----------------------", books);
   const connectWebSocket = () => {
     ws.current = new WebSocket("wss://api-pub.bitfinex.com/ws/2");
     let msg = JSON.stringify({
@@ -94,12 +74,15 @@ const Home = ({ navigation }: HomeScreenProps) => {
 
     // Assuming 'state' is an instance of BookListState
     const mySetKeys = Object.keys(books.mySet);
-    let tablearr = [["Price", "Amount"]];
+    let tablearr = [["Price", "Count", "Amount"]];
     mySetKeys.forEach((key) => {
       const value = books.mySet[key];
-      console.log("value--------------------", value);
-      if (value && value[0] && value[1]) {
-        tablearr.push([value[0].toString(), value[1].toString()]);
+      if (value && value[0] && value[2] && value[1]) {
+        tablearr.push([
+          value[0].toString(),
+          value[1].toString(),
+          value[2].toString(),
+        ]);
       }
     });
     return <Table data={tablearr} />;
