@@ -3,7 +3,7 @@ import type { PayloadAction } from "@reduxjs/toolkit";
 import { BookQueryResponse } from "../../types";
 
 export type BookListState = {
-  mySet: { [key: string]: [number, number, number] };
+  mySet: { [key: string]: string[] };
 };
 
 const initialState: BookListState = {
@@ -18,9 +18,31 @@ const BookListSlice = createSlice({
       state: BookListState,
       action: PayloadAction<BookQueryResponse>
     ) => {
-      let firstpart = action.payload[0];
-      let secondpart_arr = action.payload[1];
-      state.mySet[firstpart] = secondpart_arr;
+      let data_arr = action.payload[1];
+
+      //handle mainpulating and updating state
+      const handleData = (data: Number[] = []) => {
+        let price = data[0] as number;
+        let count = data[1] as number;
+        let amount = data[2] as number;
+        if (count <= 0) {
+          delete state.mySet[price];
+        } else {
+          state.mySet[price] = [price.toString(), amount.toString()];
+        }
+      };
+      if (Array.isArray(data_arr) && Array.isArray(data_arr[0])) {
+        // extra book list
+        let booklist = data_arr as Array<Number[]>;
+
+        //iterate over booklist
+        booklist.forEach((arr, index) => {
+          handleData(arr);
+        });
+      } else if (Array.isArray(data_arr) && !Array.isArray(data_arr[0])) {
+        let new_data = data_arr as Number[];
+        handleData(new_data);
+      }
     },
     removeBook: (state, action) => {
       const keyToRemove = action.payload;

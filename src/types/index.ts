@@ -1,1 +1,4 @@
-export type BookQueryResponse = [number, [number, number, number]];
+export type BookQueryResponse = [
+  number,
+  Array<[number, number, number]> | [number, number, number]
+];
